@@ -1,0 +1,132 @@
+#include <stdio.h>
+//---------ACCEL-------------
+enum AccelRange{
+	ARange_2G = 0b00,
+	ARange_4G = 0b01,
+	ARange_8G = 0b10,
+	ARange_16G = 0b11
+};
+enum AccelBandwidth{
+	ABW_7_81Hz = 0b000,
+	ABW_15_63Hz = 0b001,
+	ABW_31_25Hz = 0b011,
+	ABW_62_5Hz = 0b100,
+	ABW_125Hz = 0b101,
+	ABW_500Hz = 0b110,
+	ABW_1000Hz = 0b111
+};
+enum AccelPwrMode{
+	APM_Normal = 0b000,
+	APM_Suspend = 0b001,
+	APM_LowPwr1 = 0b010,
+	APM_Stnby = 0b011,
+	APM_LowPwr2 = 0b100,
+	APM_DeepSuspend = 0b101
+};
+//---------GYRO-------------
+enum GyroRange{
+	GRange_2000dps = 0b000,
+	GRange_1000dps = 0b001,
+	GRange_500dps = 0b010,
+	GRange_250dps = 0b011,
+	GRange_125dps = 0b100
+};
+enum GyroBandwith{
+	GBW_523Hz = 0b000,
+	GBW_230Hz = 0b001,
+	GBW_116Hz = 0b010,
+	GBW_47Hz = 0b011,
+	GBW_23Hz = 0b100,
+	GBW_12Hz = 0b101,
+	GBW_64Hz = 0b110,
+	GBW_32Hz = 0b111
+};
+enum GyroOpMode{
+	GOM_Normal= 0b000,
+	GOM_FastPwrUp= 0b001,
+	GOM_DeepSuspend= 0b010,
+	GOM_Suspend= 0b011,
+	GOM_AdvPwrsave= 0b100
+};
+//---------MAGNO-------------
+enum MagnoRate{
+	MR_2Hz= 0b000,
+	MR_6Hz= 0b001,
+	MR_8Hz= 0b010,
+	MR_10Hz= 0b011,
+	MR_15Hz= 0b100,
+	MR_20Hz= 0b101,
+	MR_25Hz= 0b110,
+	MR_30Hz= 0b111
+};
+enum MagnoOpMode{
+	LowPwr = 0b00,
+	Regular = 0b01,
+	EnhancedRegular = 0b10,
+	HighAccuracy = 0b11
+	};
+enum MagnoPwrMode{
+	Normal = 0b00,
+	Sleep = 0b01,
+	Suspend = 0b10,
+	ForceMode = 0b11
+};
+void printBinary(int binary){
+	for (int i = 7;i >= 0; i-- ){
+		printf("%d", (binary >> i) & 1);
+	}
+	printf("\n");
+}
+int main(){
+	//----------ACCEL-----------
+	int accelRange = ARange_8G;  //xxxxxx00b
+	int accelBandwidth = ABW_500Hz; //xxx000xxb
+	int accelPwrMode = APM_Normal; //000xxxxxb
+	//----------GYRO-----------
+	int gyroRange = GRange_500dps; //xxxxx000b
+	int gyroBandwidth = GBW_12Hz; //xx000xxxb
+	int gyroOpMode = GOM_Suspend; //xxxxx000b
+	//----------MAGNO-----------
+	int magnoRate = MR_15Hz; //xxxxx000b
+	int magnoOpMode= HighAccuracy; //xxx00xxxb
+	int magnoPwrMode= Normal; //x00xxxxxb
+	//--------------------------
+	int accelConfigValue;
+	int gyroConfigValue0;
+	int gyroConfigValue1;
+	int magnoConfigValue;
+	int x1,x2,x3,x4,x5;
+	
+	x1 = accelBandwidth << 2;
+	x2 = accelPwrMode << 5;
+	x3 = gyroBandwidth << 3;
+	x4 = magnoOpMode << 3;
+	x5 = magnoPwrMode << 5;
+	
+	accelConfigValue = x2+x1+accelRange;
+	gyroConfigValue0 = x3+gyroRange;
+	gyroConfigValue1 = gyroOpMode;
+	magnoConfigValue = x5+x4+magnoRate; 
+	
+	printf("[ACC_Config](Decimal): %d\n",accelConfigValue);
+	printf("[ACC_Config](Hexadecimal): 0x%x\n",accelConfigValue);
+	printf("[ACC_Config](Binary): 0b");
+	printBinary(accelConfigValue);
+	
+	printf("\n[GYR_Config_0](Decimal): %d\n",gyroConfigValue0);
+	printf("[GYR_Config_0](Hexadecimal): 0x%x\n",gyroConfigValue0);
+	printf("[GYR_Config_0](Binary): 0b");
+	printBinary(gyroConfigValue0);
+	
+	printf("\n[GYR_Config_1](Decimal): %d\n",gyroConfigValue1);
+	printf("[GYR_Config_1](Hexadecimal): 0x%x\n",gyroConfigValue1);
+	printf("[GYR_Config_1](Binary): 0b");
+	printBinary(gyroConfigValue1);
+	
+	printf("\n[MAG_Config](Decimal): %d\n",magnoConfigValue);
+	printf("[MAG_Config](Hexadecimal): 0x%x\n",magnoConfigValue);
+	printf("[MAG_Config](Binary): 0b");
+	printBinary(magnoConfigValue);
+	
+	return 0;
+}
